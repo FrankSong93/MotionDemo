@@ -14,7 +14,6 @@
 		982F29281E023D4800B0DC89 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 982F29271E023D4800B0DC89 /* Assets.xcassets */; };
 		982F292B1E023D4800B0DC89 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 982F29291E023D4800B0DC89 /* LaunchScreen.storyboard */; };
 		982F29371E02461400B0DC89 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 982F29361E02461400B0DC89 /* CoreMotion.framework */; };
-		982F29391E0246EC00B0DC89 /* QuaternionOperations.m in Sources */ = {isa = PBXBuildFile; fileRef = 982F29381E0246EC00B0DC89 /* QuaternionOperations.m */; };
 		98E7D4C91E07F32B00BE8DED /* Compass.m in Sources */ = {isa = PBXBuildFile; fileRef = 98E7D4C81E07F32B00BE8DED /* Compass.m */; };
 		98E7D4CD1E08D53300BE8DED /* FINCamera.m in Sources */ = {isa = PBXBuildFile; fileRef = 98E7D4CC1E08D53300BE8DED /* FINCamera.m */; };
 		98E7D51E1E08D57C00BE8DED /* Comp2_00000.png in Resources */ = {isa = PBXBuildFile; fileRef = 98E7D4CF1E08D57C00BE8DED /* Comp2_00000.png */; };
@@ -110,7 +109,6 @@
 		982F292A1E023D4800B0DC89 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		982F292C1E023D4800B0DC89 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		982F29361E02461400B0DC89 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
-		982F29381E0246EC00B0DC89 /* QuaternionOperations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QuaternionOperations.m; sourceTree = "<group>"; };
 		982F293A1E02472600B0DC89 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		98E7D4C71E07F32B00BE8DED /* Compass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Compass.h; sourceTree = "<group>"; };
 		98E7D4C81E07F32B00BE8DED /* Compass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Compass.m; sourceTree = "<group>"; };
@@ -232,7 +230,6 @@
 				98E7D4CE1E08D57C00BE8DED /* Comp2 */,
 				98E7D4CA1E08D53300BE8DED /* FINCamera */,
 				982F293A1E02472600B0DC89 /* Constants.h */,
-				982F29381E0246EC00B0DC89 /* QuaternionOperations.m */,
 				982F291E1E023D4800B0DC89 /* AppDelegate.h */,
 				982F291F1E023D4800B0DC89 /* AppDelegate.m */,
 				982F29211E023D4800B0DC89 /* ViewController.h */,
@@ -513,7 +510,6 @@
 				98E7D4CD1E08D53300BE8DED /* FINCamera.m in Sources */,
 				982F29231E023D4800B0DC89 /* ViewController.m in Sources */,
 				982F29201E023D4800B0DC89 /* AppDelegate.m in Sources */,
-				982F29391E0246EC00B0DC89 /* QuaternionOperations.m in Sources */,
 				98E7D4C91E07F32B00BE8DED /* Compass.m in Sources */,
 				982F291D1E023D4800B0DC89 /* main.m in Sources */,
 			);
@@ -641,6 +637,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = franksong.MotionDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -654,6 +651,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = franksong.MotionDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
