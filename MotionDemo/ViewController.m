@@ -86,8 +86,6 @@
 		_motionManager.deviceMotionUpdateInterval = 1/60.f;
 		[_motionManager startDeviceMotionUpdates];
 		
-//		_motionManager.gyroUpdateInterval = 1/60.f;
-//		[_motionManager startGyroUpdates];
 		
 		_displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(updateMotion)];
 		[_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
@@ -106,17 +104,6 @@
 - (void)updateMotion {
 	CMDeviceMotion *motion = _motionManager.deviceMotion;
 	
-	// Gravity 获取手机的重力值在各个方向上的分量，根据这个就可以获得手机的空间位置，倾斜角度等
-//	double gravityX = motion.gravity.x;
-//	double gravityY = motion.gravity.y;
-//	double gravityZ = motion.gravity.z;
-	
-//	// 获取手机的倾斜角度(zTheta是手机与水平面的夹角， xyTheta是手机绕自身旋转的角度)：
-//	double zTheta = atan2(gravityZ,sqrtf(gravityX * gravityX + gravityY * gravityY)) / M_PI * 180.0;
-//	double xyTheta = atan2(gravityX, gravityY) / M_PI * 180.0;
-
-//	NSLog(@"手机与水平面的夹角 --- %.4f, 手机绕自身旋转的角度为 --- %.4f", zTheta, xyTheta);
-
 
 	if (!_initialAttitude) {
 		_initialAttitude = motion.attitude;
@@ -125,21 +112,11 @@
 	
 	CMQuaternion quat = motion.attitude.quaternion;
 
-//	NSLog(@"x->%f, y->%f, z->%f, w->%f", quat.x, quat.y, quat.z, quat.w);
-	
 	float myPitch;
 	float myYaw;
 	float myRoll;
 	__block double rotation = atan2(motion.gravity.x, motion.gravity.y) - M_PI;
 	
-//	UIDeviceOrientation deviceOrientation = [self handleDeviceMotion:motion];
-	
-	// 旋转矩阵求欧拉角
-	
-//	CMRotationMatrix rotationMatix = motion.attitude.rotationMatrix;
-//	myRoll = atan2(-rotationMatix.m31, sqrt(rotationMatix.m32*rotationMatix.m32 + rotationMatix.m33*rotationMatix.m33));
-//	myPitch = atan2(rotationMatix.m21, rotationMatix.m11);
-//	myYaw = atan2(rotationMatix.m32, rotationMatix.m33);
 	
 	
 	myPitch = (atan2(2*(quat.x*quat.w + quat.y*quat.z), 1 - 2*quat.x*quat.x - 2*quat.z*quat.z));
@@ -231,10 +208,7 @@
 
 //
 	
-//	NSLog(@"rotation--->:%f, yaw--->%f, pitch:---->%f, roll--->%f", rotation, yaw, pitch, roll);
-//	NSLog(@"--->yaw--->%f, pitch:---->%f, roll--->%f", yaw, pitch, roll);
-//	NSLog(@"Yaw--->%f, Pitch:---->%f, Roll--->%F", CC_RADIANS_TO_DEGREES(motion.attitude.yaw), CC_RADIANS_TO_DEGREES(motion.attitude.pitch), CC_RADIANS_TO_DEGREES(motion.attitude.roll));
-	
+
 	_yawLabel.text = [NSString stringWithFormat:@"Yaw:%f", yaw];
 	_pitchLabel.text = [NSString stringWithFormat:@"Pitch:%f", pitch];
 	_rollLabel.text = [NSString stringWithFormat:@"Roll:%f", roll];
