@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		44E1D7CD4ECD71E9BF7B0193 /* libPods-MotionDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FF9DA0983431DBBA9C24B4FF /* libPods-MotionDemo.a */; };
+		98074F731E2367520027B945 /* MotionEffectView.m in Sources */ = {isa = PBXBuildFile; fileRef = 98074F721E2367520027B945 /* MotionEffectView.m */; };
+		98074F761E2371B40027B945 /* EffectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 98074F751E2371B40027B945 /* EffectViewController.m */; };
 		982F291D1E023D4800B0DC89 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 982F291C1E023D4800B0DC89 /* main.m */; };
 		982F29201E023D4800B0DC89 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 982F291F1E023D4800B0DC89 /* AppDelegate.m */; };
 		982F29231E023D4800B0DC89 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 982F29221E023D4800B0DC89 /* ViewController.m */; };
@@ -100,6 +102,10 @@
 
 /* Begin PBXFileReference section */
 		1DAC0DBED16636E97825A651 /* Pods-MotionDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MotionDemo.release.xcconfig"; path = "Pods/Target Support Files/Pods-MotionDemo/Pods-MotionDemo.release.xcconfig"; sourceTree = "<group>"; };
+		98074F711E2367520027B945 /* MotionEffectView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotionEffectView.h; sourceTree = "<group>"; };
+		98074F721E2367520027B945 /* MotionEffectView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MotionEffectView.m; sourceTree = "<group>"; };
+		98074F741E2371B40027B945 /* EffectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectViewController.h; sourceTree = "<group>"; };
+		98074F751E2371B40027B945 /* EffectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EffectViewController.m; sourceTree = "<group>"; };
 		982F29181E023D4800B0DC89 /* MotionDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MotionDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		982F291C1E023D4800B0DC89 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		982F291E1E023D4800B0DC89 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -249,6 +255,10 @@
 				982F291F1E023D4800B0DC89 /* AppDelegate.m */,
 				982F29211E023D4800B0DC89 /* ViewController.h */,
 				982F29221E023D4800B0DC89 /* ViewController.m */,
+				98074F711E2367520027B945 /* MotionEffectView.h */,
+				98074F721E2367520027B945 /* MotionEffectView.m */,
+				98074F741E2371B40027B945 /* EffectViewController.h */,
+				98074F751E2371B40027B945 /* EffectViewController.m */,
 				98E7D4C71E07F32B00BE8DED /* Compass.h */,
 				98E7D4C81E07F32B00BE8DED /* Compass.m */,
 				982F29241E023D4800B0DC89 /* Main.storyboard */,
@@ -577,8 +587,10 @@
 				98E7D4CD1E08D53300BE8DED /* FINCamera.m in Sources */,
 				982F29231E023D4800B0DC89 /* ViewController.m in Sources */,
 				982F29201E023D4800B0DC89 /* AppDelegate.m in Sources */,
+				98074F731E2367520027B945 /* MotionEffectView.m in Sources */,
 				98E7D4C91E07F32B00BE8DED /* Compass.m in Sources */,
 				982F291D1E023D4800B0DC89 /* main.m in Sources */,
+				98074F761E2371B40027B945 /* EffectViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
