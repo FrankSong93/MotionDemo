@@ -19,21 +19,20 @@
 
 #define kXPositionMultiplier [UIScreen mainScreen].bounds.size.width/(kXRange) // 代表每一度的像素个数
 
-#define kXRange 30 // 代表将在屏幕一半处显示的度数,*2表示显示的范围
+#define kXRange 30 // 代表将在屏幕一半宽度处显示的度数,*2表示显示的范围
 
 #define kXPosition [UIScreen mainScreen].bounds.size.width/2
 
 #define kYPositionMultiplier [UIScreen mainScreen].bounds.size.height/(kYRange) // 代表每一度的像素个数
 
-#define kYRange 60 // 代表将在屏幕一半处显示的度数,*2表示显示的范围
+#define kYRange 60 // 代表将在屏幕一半高度处显示的度数,*2表示显示的范围
 
 #define kYPosition [UIScreen mainScreen].bounds.size.height/2
 
-#define CC_DEGREES_TO_RADIANS(__ANGLE__) ((__ANGLE__) * (M_PI / 180)) // PI / 180
-
-#define CC_RADIANS_TO_DEGREES(__ANGLE__) ((__ANGLE__) * 180 / M_PI)
-
 @interface ViewController () <FINCameraDelagate, AVCaptureVideoDataOutputSampleBufferDelegate>
+@property (weak, nonatomic) IBOutlet UILabel *yawLabel;
+@property (weak, nonatomic) IBOutlet UILabel *pitchLabel;
+@property (weak, nonatomic) IBOutlet UILabel *rollLabel;
 
 @property(nonatomic,strong)FINCamera * camera;
 
@@ -43,12 +42,17 @@
 
 @property (nonatomic, strong) CADisplayLink *displayLink;
 
-@property (nonatomic, assign) int yawPosition; // 记录原始X位置
-@property (nonatomic, assign) int pitchPosition; // 记录原始Y位置
+@property (nonatomic, assign) float yawPosition; // 记录原始X位置
+@property (nonatomic, assign) float pitchPosition; // 记录原始Y位置
+
+@property (nonatomic, assign) float lastYawPosition;
+@property (nonatomic, assign) float lastPitchPosition;
 
 @end
 
-@implementation ViewController
+@implementation ViewController {
+	CMAttitude *_initialAttitude;
+}
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
@@ -82,8 +86,8 @@
 		_motionManager.deviceMotionUpdateInterval = 1/60.f;
 		[_motionManager startDeviceMotionUpdates];
 		
-		_motionManager.gyroUpdateInterval = 1/60.f;
-		[_motionManager startGyroUpdates];
+//		_motionManager.gyroUpdateInterval = 1/60.f;
+//		[_motionManager startGyroUpdates];
 		
 		_displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(updateMotion)];
 		[_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
@@ -100,17 +104,52 @@
 }
 
 - (void)updateMotion {
-	
 	CMDeviceMotion *motion = _motionManager.deviceMotion;
+	
+	// Gravity 获取手机的重力值在各个方向上的分量，根据这个就可以获得手机的空间位置，倾斜角度等
+//	double gravityX = motion.gravity.x;
+//	double gravityY = motion.gravity.y;
+//	double gravityZ = motion.gravity.z;
+	
+//	// 获取手机的倾斜角度(zTheta是手机与水平面的夹角， xyTheta是手机绕自身旋转的角度)：
+//	double zTheta = atan2(gravityZ,sqrtf(gravityX * gravityX + gravityY * gravityY)) / M_PI * 180.0;
+//	double xyTheta = atan2(gravityX, gravityY) / M_PI * 180.0;
+
+//	NSLog(@"手机与水平面的夹角 --- %.4f, 手机绕自身旋转的角度为 --- %.4f", zTheta, xyTheta);
+
+
+	if (!_initialAttitude) {
+		_initialAttitude = motion.attitude;
+	}
+	[motion.attitude multiplyByInverseOfAttitude:_initialAttitude];
+	
 	CMQuaternion quat = motion.attitude.quaternion;
+
+//	NSLog(@"x->%f, y->%f, z->%f, w->%f", quat.x, quat.y, quat.z, quat.w);
 	
-	NSLog(@"x->%f, y->%f, z->%f, w->%f", quat.x, quat.y, quat.z, quat.w);
+	float myPitch;
+	float myYaw;
+	float myRoll;
+	__block double rotation = atan2(motion.gravity.x, motion.gravity.y) - M_PI;
 	
-	float myPitch = (atan2(2*(quat.x*quat.w + quat.y*quat.z), 1 - 2*quat.x*quat.x - 2*quat.z*quat.z));
-	float myYaw = (asin(2*quat.x*quat.y + 2*quat.w*quat.z));
-	float myRoll = atan2(2*(quat.y*quat.w - quat.x*quat.z), 1 - 2*quat.y*quat.y - 2*quat.z*quat.z);
+//	UIDeviceOrientation deviceOrientation = [self handleDeviceMotion:motion];
 	
-	// kalman filtering 卡尔曼滤波
+	// 旋转矩阵求欧拉角
+	
+//	CMRotationMatrix rotationMatix = motion.attitude.rotationMatrix;
+//	myRoll = atan2(-rotationMatix.m31, sqrt(rotationMatix.m32*rotationMatix.m32 + rotationMatix.m33*rotationMatix.m33));
+//	myPitch = atan2(rotationMatix.m21, rotationMatix.m11);
+//	myYaw = atan2(rotationMatix.m32, rotationMatix.m33);
+	
+	
+	myPitch = (atan2(2*(quat.x*quat.w + quat.y*quat.z), 1 - 2*quat.x*quat.x - 2*quat.z*quat.z));
+	myYaw = (asin(2*quat.x*quat.y + 2*quat.w*quat.z));
+	myRoll = atan2(2*(quat.y*quat.w - quat.x*quat.z), 1 - 2*quat.y*quat.y - 2*quat.z*quat.z);
+
+	
+	NSLog(@"rotation--->:%f, myYaw--->%f, pitch:---->%f, roll--->%f", rotation, myYaw, myPitch, myRoll);
+	
+//	// kalman filtering 卡尔曼滤波
 	static float q1 = 0.1;   // process noise
 	static float r1 = 0.1;   // sensor noise
 	static float p1 = 0.1;   // estimated error
@@ -175,31 +214,37 @@
 	__block int xPosition;
 	__block int yPosition;
 	
-	__block double rotation = atan2(motion.gravity.x, motion.gravity.y) - M_PI;
-	
-	self.imageView.transform = CGAffineTransformRotate(CGAffineTransformIdentity, rotation);
-	
-	xPosition = [self getXPositionIn360:yaw];
-	yPosition = [self getYPositionIn360:pitch];
-	
-	
+//	__block double rotation = atan2(motion.gravity.x, motion.gravity.y) - M_PI;
+//
+	// self.imageView.transform = CGAffineTransformRotate(CGAffineTransformIdentity, rotation);
 	
 	if (ABS(roll0 - roll) > 90 ) {
 		_imageView.hidden = YES;
 	} else {
 		_imageView.hidden = NO;
+
+		xPosition = [self getXPositionIn360:yaw];
+
+		yPosition = [self getYPositionIn360:pitch];
 	}
 	
+
+//
 	
-	NSLog(@"rotation--->:%f, yaw--->%f, pitch:---->%f, roll--->%f", rotation, yaw, pitch, roll);
-	//			NSLog(@"Yaw--->%f, Pitch:---->%f, Roll--->%F", CC_RADIANS_TO_DEGREES(motion.attitude.yaw), CC_RADIANS_TO_DEGREES(motion.attitude.pitch), CC_RADIANS_TO_DEGREES(motion.attitude.roll));
+//	NSLog(@"rotation--->:%f, yaw--->%f, pitch:---->%f, roll--->%f", rotation, yaw, pitch, roll);
+//	NSLog(@"--->yaw--->%f, pitch:---->%f, roll--->%f", yaw, pitch, roll);
+//	NSLog(@"Yaw--->%f, Pitch:---->%f, Roll--->%F", CC_RADIANS_TO_DEGREES(motion.attitude.yaw), CC_RADIANS_TO_DEGREES(motion.attitude.pitch), CC_RADIANS_TO_DEGREES(motion.attitude.roll));
+	
+	_yawLabel.text = [NSString stringWithFormat:@"Yaw:%f", yaw];
+	_pitchLabel.text = [NSString stringWithFormat:@"Pitch:%f", pitch];
+	_rollLabel.text = [NSString stringWithFormat:@"Roll:%f", roll];
 	
 	[UIView animateWithDuration:0.1f
 						  delay:0.0f
 						options:UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction | UIViewAnimationOptionCurveEaseOut
 					 animations:^{
 						 NSLog(@"xPosition:%d, yPosition:%d", xPosition, yPosition);
-						 //								 self.imageView.transform = CGAffineTransformMakeRotation(rotation);
+//						  self.imageView.transform = CGAffineTransformMakeRotation(rotation);
 						 
 						 [_imageView setCenter:CGPointMake(xPosition, yPosition)];
 					 }
@@ -214,6 +259,7 @@
 
 - (int)getYPositionIn360:(float)pitch {
 	_imageView.hidden = NO;
+
 	// X
 	// Convert the yaw value to a value in the range of 0 to 360
 	int positionYIn360 = pitch;
@@ -251,22 +297,7 @@
 					
 				} else {
 					// Run Standard Position Check
-					if (_pitchPosition > positionYIn360) {
-						difference = _pitchPosition - positionYIn360;
-						int yPosition = kYPosition - (difference * kYPositionMultiplier);
-						
-						NSLog(@"returnY-->%d",2);
-						return yPosition;
-						
-					} else {
-						difference = positionYIn360 - _pitchPosition;
-						int yPosition = kYPosition + (difference * kYPositionMultiplier);
-						
-						NSLog(@"returnY-->%d",3);
-						return yPosition;
-						
-					}
-					
+					return [self checkYStandardPoint:positionYIn360];
 				}
 			} else if(positionYIn360 > 360 - kYRange) {
 				// Run 2
@@ -277,38 +308,12 @@
 					return yPosition;
 				} else {
 					// Run Standard Position Check
-					
-					if (_pitchPosition > positionYIn360) {
-						difference = _pitchPosition - positionYIn360;
-						int yPosition = kYPosition - (difference * kYPositionMultiplier);
-						NSLog(@"returnY-->%d",5);
-						return yPosition;
-						
-					} else {
-						difference = positionYIn360 - _pitchPosition;
-						int yPosition = kYPosition + (difference * kYPositionMultiplier);
-						NSLog(@"returnY-->%d",6);
-						return yPosition;
-					}
+					return [self checkYStandardPoint:positionYIn360];
 				}
 			} else {
 				// Run Standard Position Check
 				
-				if (_pitchPosition > positionYIn360) {
-					difference = _pitchPosition - positionYIn360;
-					int yPosition = kYPosition - (difference * kYPositionMultiplier);
-					
-					NSLog(@"returnY-->%d",7);
-					return yPosition;
-					
-				} else {
-					difference = positionYIn360 - _pitchPosition;
-					int yPosition = kYPosition + (difference * kYPositionMultiplier);
-					
-					NSLog(@"returnY-->%d",8);
-					return yPosition;
-				}
-				
+				return [self checkYStandardPoint:positionYIn360];
 			}
 			
 		}
@@ -327,21 +332,7 @@
 				} else {
 					// Run Standard Position Check
 					
-					if (_pitchPosition > positionYIn360) {
-						difference = _pitchPosition - positionYIn360;
-						int yPosition = kYPosition - (difference * kYPositionMultiplier);
-						
-						NSLog(@"returnY-->%d",10);
-						return yPosition;
-					} else {
-						difference = positionYIn360 - _pitchPosition;
-						int yPosition = kYPosition + (difference * kYPositionMultiplier);
-						
-						NSLog(@"returnY-->%d",11);
-						return yPosition;
-						
-					}
-					
+					return [self checkYStandardPoint:positionYIn360];
 					
 				}
 			} else if(positionYIn360 > 360 - kYRange) {
@@ -355,39 +346,11 @@
 					
 				} else {
 					// Run Standard Position Check
-					
-					if (_pitchPosition > positionYIn360) {
-						difference = _pitchPosition - positionYIn360;
-						int yPosition = kYPosition - (difference * kYPositionMultiplier);
-						
-						NSLog(@"returnY-->%d",13);
-						return yPosition;
-						
-					} else {
-						difference = positionYIn360 - _pitchPosition;
-						int yPosition = kYPosition + (difference * kYPositionMultiplier);
-						
-						NSLog(@"returnY-->%d",14);
-						return yPosition;
-						
-					}
-					
+					return [self checkYStandardPoint:positionYIn360];
 				}
 			} else {
 				// Run Standard Position Check
-				if (_pitchPosition > positionYIn360) {
-					difference = _pitchPosition - positionYIn360;
-					int yPosition = kYPosition - (difference * kYPositionMultiplier);
-					
-					NSLog(@"returnY-->%d",15);
-					return yPosition;
-					
-				} else {
-					difference = positionYIn360 - _pitchPosition;
-					int yPosition = kYPosition + (difference * kYPositionMultiplier);
-					NSLog(@"returnY-->%d",16);
-					return yPosition;
-				}
+				return [self checkYStandardPoint:positionYIn360];
 			}
 			
 		}
@@ -401,8 +364,6 @@
 		return [UIScreen mainScreen].bounds.size.height + _imageView.frame.size.height;
 	}
 }
-
-
 
 
 - (int)getXPositionIn360:(float)yaw {
@@ -438,62 +399,25 @@
 				if (_yawPosition > 360 - kXRange) {
 					difference = (360 - _yawPosition) + positionXIn360;
 					int xPosition = kXPosition + (difference * kXPositionMultiplier);
-					
-					NSLog(@"returnX-->%d",1);
 					return xPosition;
 				} else {
 					// Run Standard Position Check
-					if (_yawPosition > positionXIn360) {
-						difference = _yawPosition - positionXIn360;
-						int xPosition = kXPosition - (difference * kXPositionMultiplier);
-						NSLog(@"returnX-->%d",2);
-						return xPosition;
-					} else {
-						difference = positionXIn360 - _yawPosition;
-						int xPosition = kXPosition + (difference * kXPositionMultiplier);
-						NSLog(@"returnX-->%d",3);
-						return xPosition;
-					}
+					return [self checkXStandardPoint:positionXIn360];
 				}
 			} else if(positionXIn360 > 360 - kXRange) {
 				// Run 2
 				if (_yawPosition < kXRange) {
 					difference = _yawPosition + (360 - positionXIn360);
 					int xPosition = kXPosition - (difference * kXPositionMultiplier);
-					NSLog(@"returnX-->%d",4);
+
 					return xPosition;
 				} else {
 					// Run Standard Position Check
-					
-					if (_yawPosition > positionXIn360) {
-						difference = _yawPosition - positionXIn360;
-						int xPosition = kXPosition - (difference * kXPositionMultiplier);
-						NSLog(@"returnX-->%d",5);
-						return xPosition;
-						
-					} else {
-						difference = positionXIn360 - _yawPosition;
-						int xPosition = kXPosition + (difference * kXPositionMultiplier);
-						NSLog(@"returnX-->%d",6);
-						return xPosition;
-					}
+					return [self checkXStandardPoint:positionXIn360];
 				}
 			} else {
 				// Run Standard Position Check
-				
-				if (_yawPosition > positionXIn360) {
-					difference = _yawPosition - positionXIn360;
-					int xPosition = kXPosition - (difference * kXPositionMultiplier);
-					
-					NSLog(@"returnX-->%d",7);
-					return xPosition;
-				} else {
-					difference = positionXIn360 - _yawPosition;
-					int xPosition = kXPosition + (difference * kXPositionMultiplier);
-					
-					NSLog(@"returnX-->%d",8);
-					return xPosition;
-				}
+				return [self checkXStandardPoint:positionXIn360];
 			}
 		}
 		
@@ -511,66 +435,22 @@
 				} else {
 					// Run Standard Position Check
 					
-					if (_yawPosition > positionXIn360) {
-						difference = _yawPosition - positionXIn360;
-						int xPosition = kXPosition - (difference * kXPositionMultiplier);
-						
-						NSLog(@"returnX-->%d",10);
-						return xPosition;
-					} else {
-						difference = positionXIn360 - _yawPosition;
-						int xPosition = kXPosition + (difference * kXPositionMultiplier);
-						
-						NSLog(@"returnX-->%d",11);
-						return xPosition;
-					}
-					
+					return [self checkXStandardPoint:positionXIn360];
 				}
 			} else if(positionXIn360 > 360 - kXRange) {
 				// Run 2
 				if (_yawPosition < kXRange) {
 					difference = _yawPosition + (360 - positionXIn360);
 					int xPosition = kXPosition - (difference * kXPositionMultiplier);
-					
-					NSLog(@"returnX-->%d",12);
 					return xPosition;
 					
 				} else {
 					// Run Standard Position Check
-					
-					if (_yawPosition > positionXIn360) {
-						difference = _yawPosition - positionXIn360;
-						int xPosition = kXPosition - (difference * kXPositionMultiplier);
-						
-						NSLog(@"returnX-->%d",13);
-						return xPosition;
-						
-					} else {
-						difference = positionXIn360 - _yawPosition;
-						int xPosition = kXPosition + (difference * kXPositionMultiplier);
-						
-						NSLog(@"returnX-->%d",14);
-						return xPosition;
-						
-					}
-					
+					return [self checkXStandardPoint:positionXIn360];
 				}
 			} else {
 				// Run Standard Position Check
-				
-				if (_yawPosition > positionXIn360) {
-					difference = _yawPosition - positionXIn360;
-					int xPosition = kXPosition - (difference * kXPositionMultiplier);
-					
-					NSLog(@"returnX-->%d",15);
-					return xPosition;
-					
-				} else {
-					difference = positionXIn360 - _yawPosition;
-					int xPosition = kXPosition + (difference * kXPositionMultiplier);
-					NSLog(@"returnX-->%d",16);
-					return xPosition;
-				}
+				return [self checkXStandardPoint:positionXIn360];
 			}
 			
 		}
@@ -582,6 +462,37 @@
 	}else {
 		return [UIScreen mainScreen].bounds.size.width + _imageView.frame.size.width;
 	}
+}
+
+
+- (int)checkXStandardPoint:(int)positionXIn360 {
+	int difference;
+	if (_yawPosition > positionXIn360) {
+		difference = _yawPosition - positionXIn360;
+		int xPosition = kXPosition - (difference * kXPositionMultiplier);
+		return xPosition;
+		
+	} else {
+		difference = positionXIn360 - _yawPosition;
+		int xPosition = kXPosition + (difference * kXPositionMultiplier);
+		return xPosition;
+	}
+
+}
+
+- (int)checkYStandardPoint:(int)positionYIn360 {
+	int difference;
+	if (_pitchPosition > positionYIn360) {
+		difference = _pitchPosition - positionYIn360;
+		int yPosition = kYPosition - (difference * kYPositionMultiplier);
+		return yPosition;
+		
+	} else {
+		difference = positionYIn360 - _pitchPosition;
+		int yPosition = kYPosition + (difference * kYPositionMultiplier);
+		return yPosition;
+	}
+	
 }
 
 
