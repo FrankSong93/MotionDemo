@@ -71,11 +71,12 @@
 
 - (void)setImage:(UIImageView *)imageView {
 	_imageView = imageView;
-	_imageView.frame = self.frame;
+	_imageView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.width);
+	_imageView.userInteractionEnabled = YES;
 	[self addSubview:_imageView];
 	
 	_tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapImageView)];
-	[self addGestureRecognizer:_tapGestureRecognizer];
+	[_imageView addGestureRecognizer:_tapGestureRecognizer];
 }
 
 - (void)updateMotion {
