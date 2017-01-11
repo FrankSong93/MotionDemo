@@ -13,7 +13,6 @@
 
 #define kRADIANSTODEGREES(__ANGLE__) ((__ANGLE__) * 180 / M_PI)
 
-
 #define kXPositionMultiplier [UIScreen mainScreen].bounds.size.width/(kXRange) // 代表每一度的像素个数
 
 #define kXRange 30 // 代表将在屏幕一半宽度处显示的度数,*2表示显示的范围
@@ -223,8 +222,7 @@
 				if (_pitchPosition > 360 - kYRange) {
 					difference = (360 - _pitchPosition) + positionYIn360;
 					int yPosition = kYPosition + (difference * kYPositionMultiplier);
-					
-				
+			
 					return yPosition;
 					
 				} else {
@@ -295,7 +293,6 @@
 	}
 }
 
-
 - (int)getXPositionIn360:(float)yaw {
 	self.hidden = NO;
 	// X
@@ -360,7 +357,6 @@
 					difference = (360 - _yawPosition) + positionXIn360;
 					int xPosition = kXPosition + (difference * kXPositionMultiplier);
 					
-					
 					return xPosition;
 				} else {
 					// Run Standard Position Check
@@ -394,7 +390,6 @@
 	}
 }
 
-
 - (int)checkXStandardPoint:(int)positionXIn360 {
 	int difference;
 	if (_yawPosition > positionXIn360) {
@@ -407,7 +402,6 @@
 		int xPosition = kXPosition + (difference * kXPositionMultiplier);
 		return xPosition;
 	}
-	
 }
 
 - (int)checkYStandardPoint:(int)positionYIn360 {
@@ -422,7 +416,6 @@
 		int yPosition = kYPosition + (difference * kYPositionMultiplier);
 		return yPosition;
 	}
-	
 }
 
 @end
