@@ -18,13 +18,16 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-	UIImageView *imageView = [[UIImageView alloc] init];
+	
+	CGSize imageViewSize = CGSizeMake(300, 300);
 	NSMutableArray *images = [NSMutableArray arrayWithCapacity:79];
 	for (int i = 0; i < 79; i++) {
 		UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"Comp2_%05d", i]];
 		
 		[images addObject:image];
 	}
+	
+	UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, imageViewSize.width, imageViewSize.height)];
 	imageView.animationImages = [images copy];
 	imageView.animationDuration = 1/79;
 	[imageView startAnimating];
@@ -33,7 +36,7 @@
 //	imageView.center = self.view.center;
 	
 	
-	MotionEffectView *effectView = [[MotionEffectView alloc] initWithFrame:CGRectMake(-self.view.frame.size.width, -(self.view.frame.size.height/2), 300, 300)];
+	MotionEffectView *effectView = [[MotionEffectView alloc] initWithFrame:CGRectMake(0, 0, imageViewSize.width, imageViewSize.height)];
 	effectView.center = self.view.center;
 	effectView.delegate = self;
 	[effectView setImage:imageView];

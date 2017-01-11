@@ -72,16 +72,14 @@
 - (void)setImage:(UIImageView *)imageView {
 	_imageView = imageView;
 	_imageView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.width);
-	_imageView.userInteractionEnabled = YES;
 	[self addSubview:_imageView];
 	
 	_tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapImageView)];
-	[_imageView addGestureRecognizer:_tapGestureRecognizer];
+	[self addGestureRecognizer:_tapGestureRecognizer];
 }
 
 - (void)updateMotion {
 	CMDeviceMotion *motion = _motionManager.deviceMotion;
-	
 	
 	if (!_initialAttitude) {
 		_initialAttitude = motion.attitude;
@@ -93,7 +91,7 @@
 	float myPitch;
 	float myYaw;
 	float myRoll;
-	__block double rotation = atan2(motion.gravity.x, motion.gravity.y) - M_PI;
+//	__block double rotation = atan2(motion.gravity.x, motion.gravity.y) - M_PI;
 	
 	myPitch = (atan2(2*(quat.x*quat.w + quat.y*quat.z), 1 - 2*quat.x*quat.x - 2*quat.z*quat.z));
 	myYaw = (asin(2*quat.x*quat.y + 2*quat.w*quat.z));
@@ -166,9 +164,9 @@
 	// self.imageView.transform = CGAffineTransformRotate(CGAffineTransformIdentity, rotation);
 	
 	if (ABS(roll0 - roll) > 90 ) {
-		_imageView.hidden = YES;
+		self.hidden = YES;
 	} else {
-		_imageView.hidden = NO;
+		self.hidden = NO;
 		
 		xPosition = [self getXPositionIn360:yaw];
 		
@@ -183,7 +181,7 @@
 						 NSLog(@"xPosition:%d, yPosition:%d", xPosition, yPosition);
 						 //						  self.imageView.transform = CGAffineTransformMakeRotation(rotation);
 						 
-						 [_imageView setCenter:CGPointMake(xPosition, yPosition)];
+						 [self setCenter:CGPointMake(xPosition, yPosition)];
 					 }
 					 completion:nil];
 	
@@ -192,7 +190,7 @@
 
 
 - (int)getYPositionIn360:(float)pitch {
-	_imageView.hidden = NO;
+	self.hidden = NO;
 	
 	// X
 	// Convert the yaw value to a value in the range of 0 to 360
@@ -288,18 +286,18 @@
 		}
 	}
 	
-	_imageView.hidden = YES;
+	self.hidden = YES;
 	
 	if (pitch < kYRange ) {
-		return -_imageView.frame.size.height;
+		return - self.frame.size.height;
 	}else {
-		return [UIScreen mainScreen].bounds.size.height + _imageView.frame.size.height;
+		return [UIScreen mainScreen].bounds.size.height + self.frame.size.height;
 	}
 }
 
 
 - (int)getXPositionIn360:(float)yaw {
-	_imageView.hidden = NO;
+	self.hidden = NO;
 	// X
 	// Convert the yaw value to a value in the range of 0 to 360
 	int positionXIn360 = yaw;
@@ -388,11 +386,11 @@
 		}
 	}
 	
-	_imageView.hidden = YES;
+	self.hidden = YES;
 	if (yaw< kXRange ) {
-		return -_imageView.frame.size.width;
+		return - self.frame.size.width;
 	}else {
-		return [UIScreen mainScreen].bounds.size.width + _imageView.frame.size.width;
+		return [UIScreen mainScreen].bounds.size.width + self.frame.size.width;
 	}
 }
 
