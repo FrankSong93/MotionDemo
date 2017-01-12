@@ -18,9 +18,9 @@
 
 @interface MotionEffectView : UIView
 
-@property(nonatomic, weak) id<MotionEffectViewDelegate> delegate;
+@property (nonatomic, weak) id<MotionEffectViewDelegate> delegate;
 
-@property(nonatomic, strong, readonly) UIImageView *imageView;
+@property (nonatomic, strong, readonly) UIImageView *imageView;
 
 - (void)enableMotionEffect;
 
