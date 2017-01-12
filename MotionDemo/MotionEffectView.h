@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @class MotionEffectView;
+
 @protocol MotionEffectViewDelegate <NSObject>
 
 - (void)didTapMotionEffectView:(MotionEffectView *)view;
@@ -17,9 +18,9 @@
 
 @interface MotionEffectView : UIView
 
-@property (nonatomic, weak)id<MotionEffectViewDelegate> delegate;
+@property(nonatomic, weak) id<MotionEffectViewDelegate> delegate;
 
-@property (nonatomic, strong, readonly) UIImageView *imageView;
+@property(nonatomic, strong, readonly) UIImageView *imageView;
 
 - (void)enableMotionEffect;
 

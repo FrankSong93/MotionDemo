@@ -231,9 +231,9 @@
                               UIViewAnimationOptionAllowUserInteraction |
                               UIViewAnimationOptionCurveEaseOut
                    animations:^{
-                       //						  self.imageView.transform
-                       //= CGAffineTransformMakeRotation(rotation);
-                       [self setCenter:CGPointMake(xPosition, yPosition)];
+                     //						  self.imageView.transform
+                     //= CGAffineTransformMakeRotation(rotation);
+                     [self setCenter:CGPointMake(xPosition, yPosition)];
                    }
                    completion:nil];
 }
